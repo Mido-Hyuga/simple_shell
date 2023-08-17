@@ -58,7 +58,7 @@ The project is broken down into several tasks, each building on the previous one
 
 ## Contributors
 
-This project was developed by [Your Name] and [Contributor Name]. Contributions and feedback are welcome.
+This project was developed by [Bouslam Elmehdi](https://github.com/Mido-Hyuga) and [Hadraoui Amal](https://github.com/amalia8029). Contributions and feedback are welcome.
 
 ## License
 
