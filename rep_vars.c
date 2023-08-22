@@ -1,60 +1,56 @@
 #include "main.h"
 
 /**
- * check_env - checks if the typed variable is an env variable
- *
- * @h: head of linked list
- * @in: input string
- * @lists: lists structure
- * Return: no return
- */
+* check_env - checks if the typed variable is an env variable
+* @h: head of linked list
+* @in: input string
+* @lists: lists structure
+* Return: no return
+*/
 void check_env(r_var **h, char *in, lists_shell *lists)
 {
-	int row, chr, j, lval;
+	int a, row, c, lenval;
 	char **_envr;
 
 	_envr = lists->_environ;
 	for (row = 0; _envr[row]; row++)
 	{
-		for (j = 1, chr = 0; _envr[row][chr]; chr++)
+		for (a = 1, c = 0; _envr[row][c]; c++)
 		{
-			if (_envr[row][chr] == '=')
+			if (_envr[row][c] == '=')
 			{
-				lval = _strlen(_envr[row] + chr + 1);
-				add_rvar_node(h, j, _envr[row] + chr + 1, lval);
+				lenval = _strlen(_envr[row] + c + 1);
+				add_rvar_node(h, a, _envr[row] + c + 1, lenval);
 				return;
 			}
 
-			if (in[j] == _envr[row][chr])
-				j++;
+			if (in[a] == _envr[row][c])
+				a++;
 			else
 				break;
 		}
 	}
 
-	for (j = 0; in[j]; j++)
-	{
-		if (in[j] == ' ' || in[j] == '\t' || in[j] == ';' || in[j] == '\n')
+	for (a = 0; in[a]; a++)
+		if (in[a] == ' ' || in[a] == '\t' || in[a] == ';' || in[a] == '\n')
 			break;
-	}
 
-	add_rvar_node(h, j, NULL, 0);
+	add_rvar_node(h, a, NULL, 0);
 }
 
 /**
- * check_vars - check if the typed variable is $$ or $?
- *
- * @h: head of the linked list
- * @in: input string
- * @st: last status of the Shell
- * @lists: lists structure
- * Return: no return
- */
+* check_vars - check if the type of variable is $$ or $?
+* @h: head of the linked list
+* @in: input string
+* @st: last status of the Shell
+* @lists: lists structure
+* Return: no return
+*/
 int check_vars(r_var **h, char *in, char *st, lists_shell *lists)
 {
-	int i, lst, lpd;
+	int i, lenst, lpd;
 
-	lst = _strlen(st);
+	lenst = _strlen(st);
 	lpd = _strlen(lists->pid);
 
 	for (i = 0; in[i]; i++)
@@ -62,7 +58,7 @@ int check_vars(r_var **h, char *in, char *st, lists_shell *lists)
 		if (in[i] == '$')
 		{
 			if (in[i + 1] == '?')
-				add_rvar_node(h, 2, st, lst), i++;
+				add_rvar_node(h, 2, st, lenst), i++;
 			else if (in[i + 1] == '$')
 				add_rvar_node(h, 2, lists->pid, lpd), i++;
 			else if (in[i + 1] == '\n')
@@ -84,46 +80,45 @@ int check_vars(r_var **h, char *in, char *st, lists_shell *lists)
 }
 
 /**
- * replaced_input - replaces string into variables
- *
- * @head: head of the linked list
- * @input: input string
- * @new_input: new input string (replaced)
- * @nlen: new length
- * Return: replaced string
- */
+* replaced_input - replaces string into variables
+* @head: head of the linked list
+* @input: input string
+* @new_input: new input string (replaced)
+* @nlen: new length
+* Return: new input
+*/
 char *replaced_input(r_var **head, char *input, char *new_input, int nlen)
 {
-	r_var *indx;
+	r_var *index;
 	int i, j, k;
 
-	indx = *head;
+	index = *head;
 	for (j = i = 0; i < nlen; i++)
 	{
 		if (input[j] == '$')
 		{
-			if (!(indx->len_var) && !(indx->len_val))
+			if (!(index->len_var) && !(index->len_val))
 			{
 				new_input[i] = input[j];
 				j++;
 			}
-			else if (indx->len_var && !(indx->len_val))
+			else if (index->len_var && !(index->len_val))
 			{
-				for (k = 0; k < indx->len_var; k++)
+				for (k = 0; k < index->len_var; k++)
 					j++;
 				i--;
 			}
 			else
 			{
-				for (k = 0; k < indx->len_val; k++)
+				for (k = 0; k < index->len_val; k++)
 				{
-					new_input[i] = indx->val[k];
+					new_input[i] = index->val[k];
 					i++;
 				}
-				j += (indx->len_var);
+				j += (index->len_var);
 				i--;
 			}
-			indx = indx->next;
+			index = index->next;
 		}
 		else
 		{
@@ -136,15 +131,14 @@ char *replaced_input(r_var **head, char *input, char *new_input, int nlen)
 }
 
 /**
- * rep_var - calls functions to replace string into vars
- *
- * @input: input string
- * @listssh: lists structure
- * Return: replaced string
- */
+* rep_var - calls functions to replace string into vars
+* @input: input string
+* @listssh: lists structure
+* Return: new input
+*/
 char *rep_var(char *input, lists_shell *listssh)
 {
-	r_var *head, *indx;
+	r_var *head, *index;
 	char *status, *new_input;
 	int olen, nlen;
 
@@ -159,13 +153,13 @@ char *rep_var(char *input, lists_shell *listssh)
 		return (input);
 	}
 
-	indx = head;
+	index = head;
 	nlen = 0;
 
-	while (indx != NULL)
+	while (index != NULL)
 	{
-		nlen += (indx->len_val - indx->len_var);
-		indx = indx->next;
+		nlen += (index->len_val - index->len_var);
+		index = index->next;
 	}
 
 	nlen += olen;

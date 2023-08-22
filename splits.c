@@ -1,12 +1,11 @@
 #include "main.h"
 
 /**
- * swap_char - swaps | and & for non-printed chars
- *
- * @input: input string
- * @bool: type of swap
- * Return: swapped string
- */
+* swap_char - swaps | and & for non-printed chars
+* @input: input string
+* @bool: type of swap
+* Return: input
+*/
 char *swap_char(char *input, int bool)
 {
 	int i;
@@ -44,17 +43,16 @@ char *swap_char(char *input, int bool)
 }
 
 /**
- * add_nodes - add separators and command lines in the lists
- *
- * @head_s: head of separator list
- * @head_l: head of command lines list
- * @input: input string
- * Return: no return
- */
+* add_nodes - add separators and command lines in the lists
+* @head_s: head of separator list
+* @head_l: head of command lines list
+* @input: input string
+* Return: no return
+*/
 void add_nodes(sep_list **head_s, line_list **head_l, char *input)
 {
 	int i;
-	char *line;
+	char *ln;
 
 	input = swap_char(input, 0);
 
@@ -70,23 +68,22 @@ void add_nodes(sep_list **head_s, line_list **head_l, char *input)
 		}
 	}
 
-	line = _strtok(input, ";|&");
+	ln = _strtok(input, ";|&");
 	do {
-		line = swap_char(line, 1);
-		add_line_node_end(head_l, line);
-		line = _strtok(NULL, ";|&");
-	} while (line != NULL);
+		ln = swap_char(ln, 1);
+		add_line_node_end(head_l, ln);
+		ln = _strtok(NULL, ";|&");
+	} while (ln != NULL);
 
 }
 
 /**
- * go_next - go to the next command line stored
- *
- * @list_s: separator list
- * @list_l: command line list
- * @listssh: lists structure
- * Return: no return
- */
+* go_next - go to the next command line stored
+* @list_s: separator list
+* @list_l: command line list
+* @listssh: lists structure
+* Return: no return
+*/
 void go_next(sep_list **list_s, line_list **list_l, lists_shell *listssh)
 {
 	int loop_sep;
@@ -122,13 +119,12 @@ void go_next(sep_list **list_s, line_list **list_l, lists_shell *listssh)
 }
 
 /**
- * split_commands - splits command lines according to
- * the separators ;, | and &, and executes them
- *
- * @listssh: lists structure
- * @input: input string
- * Return: 0 to exit, 1 to continue
- */
+* split_commands - splits command lines according to
+* the separators ;, | and &, and executes them
+* @listssh: lists structure
+* @input: input string
+* Return: 0 to exit, 1 to continue
+*/
 int split_commands(lists_shell *listssh, char *input)
 {
 
@@ -169,20 +165,19 @@ int split_commands(lists_shell *listssh, char *input)
 }
 
 /**
- * split_line - tokenizes the input string
- *
- * @input: input string.
- * Return: string splitted.
- */
+* split_line - tokenizes the input string
+* @input: input string.
+* Return: string splitted.
+*/
 char **split_line(char *input)
 {
-	size_t bsize;
+	size_t size_buff;
 	size_t i;
 	char **tokens;
 	char *token;
 
-	bsize = TOK_BUFFERSIZE;
-	tokens = malloc(sizeof(char *) * (bsize));
+	size_buff = TOK_BUFFERSIZE;
+	tokens = malloc(sizeof(char *) * (size_buff));
 	if (tokens == NULL)
 	{
 		write(STDERR_FILENO, ": allocation error\n", 18);
@@ -194,10 +189,10 @@ char **split_line(char *input)
 
 	for (i = 1; token != NULL; i++)
 	{
-		if (i == bsize)
+		if (i == size_buff)
 		{
-			bsize += TOK_BUFFERSIZE;
-			tokens = _reallocdp(tokens, i, sizeof(char *) * bsize);
+			size_buff += TOK_BUFFERSIZE;
+			tokens = _reallocdp(tokens, i, sizeof(char *) * size_buff);
 			if (tokens == NULL)
 			{
 				write(STDERR_FILENO, ": allocation error\n", 18);
