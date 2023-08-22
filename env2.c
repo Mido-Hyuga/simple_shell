@@ -1,21 +1,20 @@
 #include "main.h"
 
 /**
- * copy_info - copies info to create
- * a new env or alias
- * @name: name (env or alias)
- * @value: value (env or alias)
- *
- * Return: new env or alias.
- */
+* copy_info - copies info to create
+* a new env or alias
+* @name: name (env or alias)
+* @value: value (env or alias)
+* Return: new env or alias.
+*/
 char *copy_info(char *name, char *value)
 {
 	char *new;
-	int len_name, len_value, len;
+	int name_len, val_len, len;
 
-	len_name = _strlen(name);
-	len_value = _strlen(value);
-	len = len_name + len_value + 2;
+	name_len = _strlen(name);
+	val_len = _strlen(value);
+	len = name_len + val_len + 2;
 	new = malloc(sizeof(char) * (len));
 	_strcpy(new, name);
 	_strcat(new, "=");
@@ -26,16 +25,15 @@ char *copy_info(char *name, char *value)
 }
 
 /**
- * set_env - sets an environment variable
- *
- * @name: name of the environment variable
- * @value: value of the environment variable
- * @listssh: lists structure (environ)
- * Return: no return
- */
+* set_env - sets an environment variable
+* @name: name of the environment variable
+* @value: value of the environment variable
+* @listssh: lists structure (environ)
+* Return: no return
+*/
 void set_env(char *name, char *value, lists_shell *listssh)
 {
-	int i;
+	int i, j;
 	char *var_env, *name_env;
 
 	for (i = 0; listssh->_environ[i]; i++)
@@ -51,19 +49,18 @@ void set_env(char *name, char *value, lists_shell *listssh)
 		}
 		free(var_env);
 	}
-
-	listssh->_environ = _reallocdp(listssh->_environ, i, sizeof(char *) * (i + 2));
+	j = sizeof(char *) * (i + 2);
+	listssh->_environ = _reallocdp(listssh->_environ, i, j);
 	listssh->_environ[i] = copy_info(name, value);
 	listssh->_environ[i + 1] = NULL;
 }
 
 /**
- * _setenv - compares env variables names
- * with the name passed.
- * @listssh: lists relevant (env name and env value)
- *
- * Return: 1 on success.
- */
+* _setenv - compares env variables
+* names with the name passed.
+* @listssh: lists relevant (env name and env value)
+* Return: 1 on success.
+*/
 int _setenv(lists_shell *listssh)
 {
 
@@ -79,15 +76,13 @@ int _setenv(lists_shell *listssh)
 }
 
 /**
- * _unsetenv - deletes a environment variable
- *
- * @listssh: lists relevant (env name)
- *
- * Return: 1 on success.
- */
+* _unsetenv - deletes a environment variable
+* @listssh: lists relevant (env name)
+* Return: 1 on success.
+*/
 int _unsetenv(lists_shell *listssh)
 {
-	char **realloc_environ;
+	char **rlloc_envr;
 	char *var_env, *name_env;
 	int i, j, k;
 
@@ -112,18 +107,18 @@ int _unsetenv(lists_shell *listssh)
 		get_error(listssh, -1);
 		return (1);
 	}
-	realloc_environ = malloc(sizeof(char *) * (i));
+	rlloc_envr = malloc(sizeof(char *) * (i));
 	for (i = j = 0; listssh->_environ[i]; i++)
 	{
 		if (i != k)
 		{
-			realloc_environ[j] = listssh->_environ[i];
+			rlloc_envr[j] = listssh->_environ[i];
 			j++;
 		}
 	}
-	realloc_environ[j] = NULL;
+	rlloc_envr[j] = NULL;
 	free(listssh->_environ[k]);
 	free(listssh->_environ);
-	listssh->_environ = realloc_environ;
+	listssh->_environ = rlloc_envr;
 	return (1);
 }
